@@ -182,6 +182,15 @@ def parse_version_tuple(version_text: str) -> tuple[int, ...]:
     return tuple(int(item) for item in numbers)
 
 
+def require_command(command: str, install_hint: str) -> None:
+    if shutil.which(command):
+        return
+    raise RuntimeError(
+        f"Missing required command: {command}. "
+        f"Install it first. Example: {install_hint}"
+    )
+
+
 class App:
     def __init__(self, config_path: Path):
         self.config_path = config_path.resolve()
@@ -1008,6 +1017,7 @@ class App:
 
     def run(self) -> int:
         self.videos_dir.mkdir(parents=True, exist_ok=True)
+        require_command("ffmpeg", "brew install ffmpeg")
         self.verify_youtube_connectivity()
         self.ensure_biliupr_binary()
         self.ensure_bilibili_login()

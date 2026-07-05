@@ -8,13 +8,19 @@
 
 ## 快速启动
 
-先自行安装 `Anaconda` 或 `Miniconda`，然后执行：
+推荐使用 `uv` 和 Python 3.11+：
 
 ```bash
-conda create -n y2b python=3.10 -y
-conda activate y2b
-python install.py --config config.yaml
-python upload.py --config config.yaml
+uv venv --python 3.11
+cp config.example.yaml config.yaml
+uv run python install.py --config config.yaml
+uv run python upload.py --config config.yaml
+```
+
+系统还需要安装 `ffmpeg`，否则高画质下载时音视频无法合并：
+
+```bash
+brew install ffmpeg
 ```
 
 说明：
@@ -37,7 +43,9 @@ python upload.py --config config.yaml
 3. 检查并更新依赖  
    - `yt-dlp` / `deno`（PyPI）  
    - `biliupR`（GitHub Release）
-4. 进入运行模式
+4. 检查本地命令依赖
+   - 当前要求已安装 `ffmpeg`
+5. 进入运行模式
 
 ## 四种模式
 
@@ -70,6 +78,9 @@ python upload.py --config config.yaml
 - yt-dlp JS 运行时：
   - 默认仅 `youtube.js_runtime.remote_components: ["ejs:github"]`
   - `youtube.js_runtime.js_runtimes` 为可选项（按需再开）
+- 视频画质：
+  - 在 `youtube.ydl_opts.format` 中设置，例如 `bestvideo+bestaudio/best`
+  - 限制 1080p 可用 `bestvideo[height<=1080]+bestaudio/best[height<=1080]`
 - 投稿默认项：`biliup_studio_defaults`
 - 标题正则规则：`upload.title_rules.regex_replace`
 
@@ -85,11 +96,11 @@ python upload.py --config config.yaml
 仅更新 `biliupR`（跳过 pip）：
 
 ```bash
-python install.py --config config.yaml --skip-pip
+uv run python install.py --config config.yaml --skip-pip
 ```
 
 强制重装最新 `biliupR`：
 
 ```bash
-python install.py --config config.yaml --force-biliupr
+uv run python install.py --config config.yaml --force-biliupr
 ```

@@ -59,6 +59,12 @@ youtube:
     #   - deno
 
   ydl_opts:
+    # 下载画质策略：
+    # 最高画质：bestvideo+bestaudio/best
+    # 限制 1080p：bestvideo[height<=1080]+bestaudio/best[height<=1080]
+    format: "bestvideo+bestaudio/best"
+    # 合并后的输出容器，依赖本机 ffmpeg
+    merge_output_format: mp4
     # 是否从直播起点开始下载
     live_from_start: true
     # 分片并发下载数
