@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -57,6 +59,20 @@ def load_config(config_path: Path) -> Dict[str, Any]:
 def install_python_requirements(requirements_path: Path) -> None:
     if not requirements_path.exists():
         raise FileNotFoundError(f"Requirements file not found: {requirements_path}")
+
+    uv_cmd = shutil.which("uv")
+    if uv_cmd and os.environ.get("VIRTUAL_ENV"):
+        cmd = [uv_cmd, "pip", "install", "-r", str(requirements_path)]
+        print(f"[install] Running: {' '.join(cmd)}")
+        subprocess.run(cmd, check=True)
+        return
+
+    try:
+        import pip  # noqa: F401
+    except ModuleNotFoundError:
+        print("[install] pip not found in current interpreter, trying ensurepip...")
+        subprocess.run([sys.executable, "-m", "ensurepip", "--upgrade"], check=True)
+
     cmd = [sys.executable, "-m", "pip", "install", "-r", str(requirements_path)]
     print(f"[install] Running: {' '.join(cmd)}")
     subprocess.run(cmd, check=True)
